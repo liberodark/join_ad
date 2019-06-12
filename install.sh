@@ -98,10 +98,10 @@ recap ()
     echo "  Domain admin          : '${DOMAIN_ADMIN}'"
     echo "  Domain admin group    : '${DOMAIN_ADMIN_GROUP}'"
     echo "  Domaine Kerberos      : '${KRB5_REALM}'"
-    if [ ! -z "${PROJECT_GROUP}" ]
+    if [ -z "${PROJECT_GROUP}" ]
     then
         echo "  Groupe projet         : '${PROJECT_GROUP}'"
-        if [ ! -z "${PROJECT_ADMIN_GROUP}" ]
+        if [ -z "${PROJECT_ADMIN_GROUP}" ]
         then
             echo "  Groupe admin projet   : '${PROJECT_ADMIN_GROUP}'"
         else
@@ -114,8 +114,8 @@ recap ()
     if [ ${AUTO} -eq 0 ]
     then
         echo "Continuer ? (O/N)"
-        read OK
-        if [ "${OK}" != "o" -a "${OK}" != "O" ]
+        read -r OK
+        if [ "$OK" = "o" ] || [ "$OK" = "O" ]
         then
             echo "Abandon..." 
             exit 3
@@ -133,7 +133,7 @@ parse_args "$@"
 if [ "${PROJECT_GROUP}" == "ask" ]
 then
     echo "Nom du groupe projet (vide si aucun) : "
-    read PROJECT_GROUP
+    read -r PROJECT_GROUP
     if [ -z "${PROJECT_GROUP}" ]
     then
         PROJECT_ADMIN_GROUP=""
@@ -155,7 +155,7 @@ domainname "${REALM}"
 
 header "Configuration Kerberos..."
 # sauvegarde de l'ancien fichier de conf si besoin
-[ ! -f /etc/krb5.conf.save.join.${REALM} ] && cp /etc/krb5.conf /etc/krb5.conf.save.join.${REALM} 
+[ ! -f /etc/krb5.conf.save.join."${REALM}" ] && cp /etc/krb5.conf /etc/krb5.conf.save.join."${REALM}" 
 
 cat << EOF > /etc/krb5.conf
 [logging]
@@ -202,7 +202,7 @@ systemctl restart sssd
 header "Autorisation d'accès..."
 
 realm permit -g "${DOMAIN_ADMIN_GROUP}"
-if [ ! -z "${PROJECT_GROUP}" ]
+if [ -z "${PROJECT_GROUP}" ]
 then
     realm permit -g "${PROJECT_GROUP}"
 fi
@@ -213,8 +213,8 @@ authconfig --enablemkhomedir --updateall
 header "Administrateurs..."
 
 (
-echo '"%'${DOMAIN_ADMIN_GROUP}'" ALL=(ALL) ALL'
-if [ ! -z "${PROJECT_ADMIN_GROUP}" ]
+echo '"%'"${DOMAIN_ADMIN_GROUP}"'" ALL=(ALL) ALL'
+if [ -z "${PROJECT_ADMIN_GROUP}" ]
 then
     echo '"%'${PROJECT_ADMIN_GROUP}'" ALL=(ALL) ALL'
 fi
