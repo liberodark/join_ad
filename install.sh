@@ -4,11 +4,11 @@ set -e
 set -u
 
 
-DC="VOTRE DC"
-REALM="DOMAINE"
+DC="YOUR DC"
+REALM="DOMAIN"
 KRB5_REALM=$(echo "${REALM}" | tr '[:lower:]' '[:upper:]')
 DOMAIN_ADMIN_GROUP="domain admins"
-PROJECT_ADMIN_GROUP="(prj) administrateurs"
+PROJECT_ADMIN_GROUP="(prj) administrators"
 PROJECT_GROUP=""
 DOMAIN_ADMIN=""
 
@@ -210,7 +210,7 @@ fi
 header "Création automatique des homes..."
 authconfig --enablemkhomedir --updateall
 
-header "Administrateurs..."
+header "Administrators..."
 
 (
 echo '"%'"${DOMAIN_ADMIN_GROUP}"'" ALL=(ALL) ALL'
