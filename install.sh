@@ -18,16 +18,16 @@ INSTALL=1
 
 usage ()
 {
-    echo "usage : $0 -da DOMAIN_ADMIN [options]"
-    echo "  options : "
-    echo "      -da  DA      : Définition de l'administrateur du domaine"
-    echo "      -dc  DC      : Définition du contrôleur de domaine (defaut : ${DC})"
-    echo "      -r   REALM   : Définition du nom de domaine (defaut : ${REALM})"
-    echo "      -dag DA_G    : Définition du groupe d'administrateurs du domaine (defaut : ${DOMAIN_ADMIN_GROUP})"
-    echo "      -pg  PROJECT : Définition du groupe Projet"
-    echo "      -pga PA_G    : Définition du groupe d'administrateurs des projets (defaut : ${PROJECT_ADMIN_GROUP})"
-    echo "      -auto        : Ne pas demander confirmation avant de procéder. "
-    echo "      -h           : Afficher l'aide"
+     echo "usage: $0 -da DOMAIN_ADMIN [options]"
+     echo "options:"
+     echo "-da DA: Defining the domain administrator"
+     echo "-dc DC: Domain Controller Definition (default: ${DC})"
+     echo "-r REALM: Definition of the domain name (default: ${REALM})"
+     echo "-dag DA_G: Domain Administrator Group Definition (Default: ${DOMAIN_ADMIN_GROUP})"
+     echo "-pg PROJECT: Project Group Definition"
+     echo "-pga PA_G: Project Administrators Group Definition (default: ${PROJECT_ADMIN_GROUP})"
+     echo "-auto: Do not ask for confirmation before proceeding."
+     echo "-h: Show help"
 }
 
 parse_args ()
