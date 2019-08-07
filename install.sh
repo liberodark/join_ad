@@ -60,6 +60,10 @@ gpgcheck=1
 enabled=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
 
+debian_repo='
+deb http://$repo/debian/ jessie main contrib non-free
+deb http://$repo/debian-security/ jessie/updates main contrib non-free'
+
 usage ()
 {
      echo "usage: $0 -da DOMAIN_ADMIN [options]"
@@ -82,6 +86,14 @@ if ! command -v kinit &> /dev/null; then
       echo -e "$centos_repo" >> /etc/yum.repos.d/myrepo.repo
       #yum update &> /dev/null
       yum install -y krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools &> /dev/null
+     
+     elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
+      #mkdir -p /tmp/backup-repo
+      rm /etc/apt/sources.list
+      echo -e "$debian_repo" >> /etc/apt/sources.list
+      apt update &> /dev/null
+      apt install -y krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools &> /dev/null
+       
     fi
 fi
 
