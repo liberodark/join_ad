@@ -3,6 +3,15 @@
 set -e
 set -u
 
+#=================================================
+# CHECK ROOT
+#=================================================
+
+[[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
+
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST AND VAR
+#=================================================
 
 DC="YOUR DC"
 REALM="DOMAIN"
@@ -11,10 +20,45 @@ DOMAIN_ADMIN_GROUP="domain admins"
 PROJECT_ADMIN_GROUP="(prj) administrators"
 PROJECT_GROUP=""
 DOMAIN_ADMIN=""
+distribution=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' | sed 's/["]//g' | awk '{print $1}')
+repo="YOUR REPO"
 
 AUTO=0
 YESARG=""
 INSTALL=1
+
+centos_repo='
+[base]
+name=CentOS-$releasever - Base
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
+baseurl=http://$repo/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#released updates 
+[updates]
+name=CentOS-$releasever - Updates
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
+baseurl=http://$repo/centos/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that may be useful
+[extras]
+name=CentOS-$releasever - Extras
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras&infra=$infra
+baseurl=http://$repo/centos/$releasever/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that extend functionality of existing packages
+[centosplus]
+name=CentOS-$releasever - Plus
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=centosplus&infra=$infra
+baseurl=http://$repo/centos/$releasever/centosplus/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
 
 usage ()
 {
@@ -29,6 +73,17 @@ usage ()
      echo "-auto: Do not ask for confirmation before proceeding."
      echo "-h: Show help"
 }
+
+if ! command -v kinit &> /dev/null; then
+
+    if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
+      mkdir -p /tmp/backup-repo
+      mv /etc/yum.repos.d/*.repo /tmp/backup-repo/
+      echo -e "$centos_repo" >> /etc/yum.repos.d/myrepo.repo
+      #yum update &> /dev/null
+      yum install -y krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools &> /dev/null
+    fi
+fi
 
 parse_args ()
 {
