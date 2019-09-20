@@ -279,6 +279,7 @@ header "Administrators..."
 
 (
 echo '"%'"${DOMAIN_ADMIN_GROUP}"'" ALL=(ALL) ALL' > /etc/sudoers.d/admins
+#echo '"%'"${DOMAIN_ADMIN_GROUP}"'" ALL=(ALL) ALL'
 #if [ -z "${PROJECT_ADMIN_GROUP}" ]
 #then
 #    echo '"%'${PROJECT_ADMIN_GROUP}'" ALL=(ALL) ALL'
