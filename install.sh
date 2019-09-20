@@ -4,7 +4,7 @@
 # Author: Unknow, liberodark
 # License: GNU GPLv3
 
-version="0.0.5"
+version="0.0.7"
 
 echo "Welcome on Join AD Script $version"
 
@@ -186,7 +186,7 @@ recap ()
     then
         echo "Continuer ? (O/N)"
         read -r OK
-        if [ "$OK" = "o" ] || [ "$OK" = "O" ]
+        if [ "$OK" = "n" ] || [ "$OK" = "N" ]
         then
             echo "Abandon..." 
             exit 3
