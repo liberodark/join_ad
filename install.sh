@@ -1,4 +1,12 @@
 #!/bin/bash
+#
+# About: Add AD automatically
+# Author: Unknow, liberodark
+# License: GNU GPLv3
+
+version="0.0.5"
+
+echo "Welcome on Join AD Script $version"
 
 set -e
 set -u
@@ -7,7 +15,7 @@ set -u
 # CHECK ROOT
 #=================================================
 
-[[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
+if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST AND VAR
@@ -21,7 +29,7 @@ PROJECT_ADMIN_GROUP="(prj) administrators"
 PROJECT_GROUP=""
 DOMAIN_ADMIN=""
 distribution=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' | sed 's/["]//g' | awk '{print $1}')
-repo="YOUR REPO"
+repo="YOUR_REPO"
 
 AUTO=0
 YESARG=""
