@@ -89,17 +89,17 @@ usage ()
 if ! command -v kinit &> /dev/null; then
 
     if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
-      mkdir -p /tmp/backup-repo
-      mv /etc/yum.repos.d/*.repo /tmp/backup-repo/
-      echo -e "$centos_repo" >> /etc/yum.repos.d/myrepo.repo
+      #mkdir -p /tmp/backup-repo
+      #mv /etc/yum.repos.d/*.repo /tmp/backup-repo/
+      #echo -e "$centos_repo" >> /etc/yum.repos.d/myrepo.repo
       #yum update &> /dev/null
       yum install -y krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools &> /dev/null
      
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       #mkdir -p /tmp/backup-repo
-      rm /etc/apt/sources.list
-      echo -e "$debian_repo" >> /etc/apt/sources.list
-      apt update &> /dev/null
+      #rm /etc/apt/sources.list
+      #echo -e "$debian_repo" >> /etc/apt/sources.list
+      #apt update &> /dev/null
       apt install -y krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools &> /dev/null
        
     fi
