@@ -86,7 +86,7 @@ usage ()
      echo "-h: Show help"
 }
 
-if ! command -v kinit &> /dev/null; then
+if ! command -v realm &> /dev/null; then
 
     if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
       #mkdir -p /tmp/backup-repo
