@@ -86,14 +86,12 @@ usage ()
      echo "-h: Show help"
 }
 
-if ! command -v realm &> /dev/null; then
-
-    if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
+if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
       #mkdir -p /tmp/backup-repo
       #mv /etc/yum.repos.d/*.repo /tmp/backup-repo/
       #echo -e "$centos_repo" >> /etc/yum.repos.d/myrepo.repo
       #yum update &> /dev/null
-      yum install -y krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools &> /dev/null
+      yum install -y kexec-tools yum-utils net-tools openssh-server vim bash-completion krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
      
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       #mkdir -p /tmp/backup-repo
@@ -101,8 +99,6 @@ if ! command -v realm &> /dev/null; then
       #echo -e "$debian_repo" >> /etc/apt/sources.list
       #apt update &> /dev/null
       apt install -y krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools &> /dev/null
-       
-    fi
 fi
 
 parse_args ()
@@ -216,13 +212,7 @@ then
 fi
 
 recap
-
-if [ ${INSTALL} -eq 1 ]
-then
-    header "Installation des paquets nécessaires..."
-    yum install ${YESARG} --nogpgcheck kexec-tools yum-utils net-tools openssh-server realmd oddjob oddjob-mkhomedir sssd adcli samba-common-tools vim bash-completion krb5-workstation
-    sync
-fi
+sync
 
 header "Intérrogation du domaine..."
 realm discover "${REALM}"
