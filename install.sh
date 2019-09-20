@@ -278,12 +278,12 @@ authconfig --enablemkhomedir --updateall
 header "Administrators..."
 
 (
-echo '"%'"${DOMAIN_ADMIN_GROUP}"'" ALL=(ALL) ALL'
-if [ -z "${PROJECT_ADMIN_GROUP}" ]
-then
-    echo '"%'${PROJECT_ADMIN_GROUP}'" ALL=(ALL) ALL'
-fi
-) > /etc/sudoers.d/admins
+echo '"%'"${DOMAIN_ADMIN_GROUP}"'" ALL=(ALL) ALL' > /etc/sudoers.d/admins
+#if [ -z "${PROJECT_ADMIN_GROUP}" ]
+#then
+#    echo '"%'${PROJECT_ADMIN_GROUP}'" ALL=(ALL) ALL'
+#fi
+#) > /etc/sudoers.d/admins
 
 chmod 600 /etc/sudoers.d/admins
 sync
