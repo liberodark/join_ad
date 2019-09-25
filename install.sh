@@ -4,7 +4,7 @@
 # Author: Unknow, liberodark
 # License: GNU GPLv3
 
-version="0.0.7"
+version="0.0.8"
 
 echo "Welcome on Join AD Script $version"
 
@@ -194,11 +194,6 @@ recap ()
     fi
 }
 
-header ()
-{
-    echo "=== ${1}"
-}
-
 parse_args "$@"
 
 if [ "${PROJECT_GROUP}" == "ask" ]
@@ -214,11 +209,11 @@ fi
 recap
 sync
 
-header "Intérrogation du domaine..."
+echo "Intérrogation du domaine..."
 realm discover "${REALM}"
 domainname "${REALM}"
 
-header "Configuration Kerberos..."
+echo "Configuration Kerberos..."
 # sauvegarde de l'ancien fichier de conf si besoin
 [ ! -f /etc/krb5.conf.save.join."${REALM}" ] && cp /etc/krb5.conf /etc/krb5.conf.save.join."${REALM}" 
 
@@ -248,7 +243,7 @@ kinit "${DOMAIN_ADMIN}"
 
 sync
 
-header "Join au domain..."
+echo "Join au domain..."
 realm join "${DC}" -U "${DOMAIN_ADMIN}" -v
 
 header "Nom des users sans domaine..."
@@ -264,7 +259,7 @@ sync
 
 systemctl restart sssd
 
-header "Autorisation d'accès..."
+echo "Autorisation d'accès..."
 
 realm permit -g "${DOMAIN_ADMIN_GROUP}"
 if [ -z "${PROJECT_GROUP}" ]
@@ -272,10 +267,10 @@ then
     realm permit -g "${PROJECT_GROUP}"
 fi
 
-header "Création automatique des homes..."
+echo "Création automatique des homes..."
 authconfig --enablemkhomedir --updateall
 
-header "Administrators..."
+echo "Administrators..."
 
 (
 #echo '"%'"${DOMAIN_ADMIN_GROUP}"'" ALL=(ALL) ALL' > /etc/sudoers.d/admins
