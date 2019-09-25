@@ -2,9 +2,10 @@
 #
 # About: Add AD automatically
 # Author: Unknow, liberodark
+# Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.1.0"
+version="0.1.1"
 
 echo "Welcome on Join AD Script $version"
 
@@ -266,14 +267,10 @@ authconfig --enablemkhomedir --updateall
 echo "Administrators..."
 
 if [ -n "${PROJECT_ADMIN_GROUP}" ]; then
+        echo "%${PROJECT_ADMIN_GROUP} ALL=(ALL) ALL" > /etc/sudoers.d/admins
+elif [ -n "${DOMAIN_ADMIN_GROUP}" ]; then
+        echo "%${DOMAIN_ADMIN_GROUP} ALL=(ALL) ALL" > /etc/sudoers.d/admins
 
-    echo "%${DOMAIN_ADMIN_GROUP} ALL=(ALL) ALL" > /etc/sudoers.d/admins
-     
-     elif [ -n "${DOMAIN_ADMIN_GROUP}" ]; then
-     
-    echo "%${PROJECT_ADMIN_GROUP} ALL=(ALL) ALL" > /etc/sudoers.d/admins
-    
-     fi
 fi
 
 chmod 600 /etc/sudoers.d/admins
