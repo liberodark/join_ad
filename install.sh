@@ -4,12 +4,9 @@
 # Author: Unknow, liberodark
 # License: GNU GPLv3
 
-version="0.0.8"
+version="0.1.0"
 
 echo "Welcome on Join AD Script $version"
-
-set -e
-set -u
 
 #=================================================
 # CHECK ROOT
@@ -207,7 +204,6 @@ then
 fi
 
 recap
-sync
 
 echo "Intérrogation du domaine..."
 realm discover "${REALM}"
@@ -236,17 +232,14 @@ cat << EOF > /etc/krb5.conf
     }
 
 EOF
-sync
 
-#header "Authentification du domain admin..."
+echo "Authentification du domain admin..."
 kinit "${DOMAIN_ADMIN}"
-
-sync
 
 echo "Join au domain..."
 realm join "${DC}" -U "${DOMAIN_ADMIN}" -v
 
-header "Nom des users sans domaine..."
+echo "Nom des users sans domaine..."
 
 if grep "^[ \t]*use_fully_qualified_names" "/etc/sssd/sssd.conf" > /dev/null 2>&1
 then
@@ -255,9 +248,9 @@ else
     echo 'use_fully_qualified_names = False' >> "/etc/sssd/sssd.conf"
 fi
 sed -i 's|^\([ \t]*fallback_homedir\).*$|\1 = /home/%d/%u|' "/etc/sssd/sssd.conf"
-sync
 
 systemctl restart sssd
+echo test
 
 echo "Autorisation d'accès..."
 
@@ -272,14 +265,10 @@ authconfig --enablemkhomedir --updateall
 
 echo "Administrators..."
 
-(
-#echo '"%'"${DOMAIN_ADMIN_GROUP}"'" ALL=(ALL) ALL' > /etc/sudoers.d/admins
-echo '"%'"${DOMAIN_ADMIN_GROUP}"'" ALL=(ALL) ALL'
+echo "${DOMAIN_ADMIN_GROUP} ALL=(ALL) ALL" >> /etc/sudoers.d/admins
 if [ -z "${PROJECT_ADMIN_GROUP}" ]
 then
-    echo '"%'${PROJECT_ADMIN_GROUP}'" ALL=(ALL) ALL'
+    echo "${PROJECT_ADMIN_GROUP} ALL=(ALL) ALL" >> /etc/sudoers.d/admins
 fi
-) > /etc/sudoers.d/admins
 
 chmod 600 /etc/sudoers.d/admins
-sync
