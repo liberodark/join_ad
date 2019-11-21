@@ -28,6 +28,12 @@ PROJECT_GROUP=""
 DOMAIN_ADMIN=""
 distribution=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' | sed 's/["]//g' | awk '{print $1}')
 
+# Clean Cache
+# kdestroy -A
+# sudo systemctl stop sssd
+# sudo rm -f /var/lib/sss/db/* sudo systemctl start sssd
+# authconfig --updateall
+
 AUTO=0
 #YESARG=""
 #INSTALL=1
