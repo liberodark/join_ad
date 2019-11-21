@@ -27,48 +27,10 @@ PROJECT_ADMIN_GROUP="(prj) administrators"
 PROJECT_GROUP=""
 DOMAIN_ADMIN=""
 distribution=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' | sed 's/["]//g' | awk '{print $1}')
-repo="YOUR_REPO"
 
 AUTO=0
-YESARG=""
-INSTALL=1
-
-centos_repo='
-[base]
-name=CentOS-$releasever - Base
-#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
-baseurl=http://$repo/centos/$releasever/os/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
-
-#released updates 
-[updates]
-name=CentOS-$releasever - Updates
-#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
-baseurl=http://$repo/centos/$releasever/updates/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
-
-#additional packages that may be useful
-[extras]
-name=CentOS-$releasever - Extras
-#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras&infra=$infra
-baseurl=http://$repo/centos/$releasever/extras/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
-
-#additional packages that extend functionality of existing packages
-[centosplus]
-name=CentOS-$releasever - Plus
-#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=centosplus&infra=$infra
-baseurl=http://$repo/centos/$releasever/centosplus/$basearch/
-gpgcheck=1
-enabled=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
-
-debian_repo='
-deb http://$repo/debian/ jessie main contrib non-free
-deb http://$repo/debian-security/ jessie/updates main contrib non-free'
+#YESARG=""
+#INSTALL=1
 
 usage ()
 {
@@ -105,7 +67,7 @@ parse_args ()
     do
         case "${1}" in
             -noinst)
-                INSTALL=0
+                #INSTALL=0
                 ;;
             -da)
                 shift
@@ -133,7 +95,7 @@ parse_args ()
                 ;;
             -auto)
                 AUTO=1
-                YESARG="-y"
+                #YESARG="-y"
                 ;;
             -h|--help)
                 usage
