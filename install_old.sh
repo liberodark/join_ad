@@ -4,8 +4,8 @@ set -e
 set -u
 
 
-DC="ard03.alyotech.fr"
-REALM="alyotech.fr"
+DC="ard03.dc.fr"
+REALM="dc.fr"
 KRB5_REALM=$(echo "${REALM}" | tr '[:lower:]' '[:upper:]')
 DOMAIN_ADMIN_GROUP="domain admins"
 PROJECT_ADMIN_GROUP="(prj) administrateurs"
