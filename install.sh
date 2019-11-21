@@ -28,13 +28,6 @@ PROJECT_GROUP=""
 DOMAIN_ADMIN=""
 distribution=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' | sed 's/["]//g' | awk '{print $1}')
 
-# Clean Cache
-# kdestroy -A
-# sss_cache -E
-# sudo systemctl stop sssd
-# sudo rm -f /var/lib/sss/db/* sudo systemctl start sssd
-# authconfig --updateall
-
 AUTO=0
 #YESARG=""
 #INSTALL=1
@@ -54,19 +47,28 @@ usage ()
 }
 
 if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
-      #mkdir -p /tmp/backup-repo
-      #mv /etc/yum.repos.d/*.repo /tmp/backup-repo/
-      #echo -e "$centos_repo" >> /etc/yum.repos.d/myrepo.repo
-      #yum update &> /dev/null
+      echo "Install Packages"
       yum install -y kexec-tools yum-utils net-tools openssh-server vim bash-completion krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
-     
+      echo "Clean Clean"
+      kdestroy -A
+      sss_cache -E
+      systemctl stop sssd
+      sudo rm -r /var/lib/sss/db/
+      systemctl start sssd
+      authconfig --updateall
+      
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
-      #mkdir -p /tmp/backup-repo
-      #rm /etc/apt/sources.list
-      #echo -e "$debian_repo" >> /etc/apt/sources.list
-      #apt update &> /dev/null
+      echo "Install Packages"
       apt install -y krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools &> /dev/null
+      echo "Clean Clean"
+      kdestroy -A
+      sss_cache -E
+      systemctl stop sssd
+      sudo rm -r /var/lib/sss/db/
+      systemctl start sssd
+      authconfig --updateall
 fi
+
 
 parse_args ()
 {
