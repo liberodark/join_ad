@@ -30,6 +30,7 @@ distribution=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' 
 
 # Clean Cache
 # kdestroy -A
+# sss_cache -E
 # sudo systemctl stop sssd
 # sudo rm -f /var/lib/sss/db/* sudo systemctl start sssd
 # authconfig --updateall
