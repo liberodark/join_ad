@@ -19,18 +19,14 @@ if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 # RETRIEVE ARGUMENTS FROM THE MANIFEST AND VAR
 #=================================================
 
-DC="YOUR DC"
-REALM="DOMAIN"
+DC=""
+REALM=""
 KRB5_REALM=$(echo "${REALM}" | tr '[:lower:]' '[:upper:]')
-DOMAIN_ADMIN_GROUP="domain admins"
-PROJECT_ADMIN_GROUP="(prj) administrators"
+DOMAIN_ADMIN_GROUP=""
+PROJECT_ADMIN_GROUP=""
 PROJECT_GROUP=""
 DOMAIN_ADMIN=""
 distribution=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' | sed 's/["]//g' | awk '{print $1}')
-
-AUTO=0
-#YESARG=""
-#INSTALL=1
 
 usage ()
 {
@@ -42,7 +38,6 @@ usage ()
      echo "-dag DA_G: Domain Administrator Group Definition (Default: ${DOMAIN_ADMIN_GROUP})"
      echo "-pg PROJECT: Project Group Definition"
      echo "-pga PA_G: Project Administrators Group Definition (default: ${PROJECT_ADMIN_GROUP})"
-     echo "-auto: Do not ask for confirmation before proceeding."
      echo "-h: Show help"
 }
 
@@ -75,9 +70,6 @@ parse_args ()
     while [ $# -ne 0 ]
     do
         case "${1}" in
-            -noinst)
-                #INSTALL=0
-                ;;
             -da)
                 shift
                 DOMAIN_ADMIN="${1}"
@@ -101,10 +93,6 @@ parse_args ()
             -pga)
                 shift
                 PROJECT_ADMIN_GROUP="${1}"
-                ;;
-            -auto)
-                AUTO=1
-                #YESARG="-y"
                 ;;
             -h|--help)
                 usage
