@@ -48,7 +48,7 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
       kdestroy -A
       systemctl stop sssd
       sss_cache -E
-      #sudo rm -r /var/lib/sss/db/
+      sudo rm /var/lib/sss/db/*.ldb
       systemctl start sssd
       authconfig --updateall
       
@@ -59,7 +59,7 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
       kdestroy -A
       systemctl stop sssd
       sss_cache -E
-      #sudo rm -r /var/lib/sss/db/
+      sudo rm /var/lib/sss/db/*.ldb
       systemctl start sssd
       authconfig --updateall
 fi
