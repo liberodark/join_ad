@@ -46,9 +46,9 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
       yum install -y kexec-tools yum-utils net-tools openssh-server vim bash-completion krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
       echo "Clean Clean"
       kdestroy -A
-      sss_cache -E
       systemctl stop sssd
-      sudo rm -r /var/lib/sss/db/
+      sss_cache -E
+      #sudo rm -r /var/lib/sss/db/
       systemctl start sssd
       authconfig --updateall
       
@@ -57,9 +57,9 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
       apt install -y krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools &> /dev/null
       echo "Clean Clean"
       kdestroy -A
-      sss_cache -E
       systemctl stop sssd
-      sudo rm -r /var/lib/sss/db/
+      sss_cache -E
+      #sudo rm -r /var/lib/sss/db/
       systemctl start sssd
       authconfig --updateall
 fi
