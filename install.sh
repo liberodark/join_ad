@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.1.2"
+version="0.1.3"
 
 echo "Welcome on Join AD Script $version"
 
