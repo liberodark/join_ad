@@ -226,9 +226,9 @@ authconfig --enablemkhomedir --updateall
 echo "Administrators..."
 
 if [ -n "${PROJECT_ADMIN_GROUP}" ]; then
-        echo "%${PROJECT_ADMIN_GROUP} ALL=(ALL) ALL" > /etc/sudoers.d/admins
+        echo '"%'"${PROJECT_ADMIN_GROUP}"'" ALL=(ALL) ALL' > /etc/sudoers.d/admins
 elif [ -n "${DOMAIN_ADMIN_GROUP}" ]; then
-        echo "%${DOMAIN_ADMIN_GROUP} ALL=(ALL) ALL" > /etc/sudoers.d/admins
+        echo '"%'"${DOMAIN_ADMIN_GROUP}"'" ALL=(ALL) ALL' > /etc/sudoers.d/admins
 
 fi
 
