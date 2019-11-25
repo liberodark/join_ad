@@ -139,7 +139,7 @@ recap ()
         echo "  Pas de projet"
     fi
     
-    if [ ${AUTO} -eq 0 ]
+    if [ "${AUTO}" -eq 0 ]
     then
         echo "Continuer ? (O/N)"
         read -r OK
