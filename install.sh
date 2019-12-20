@@ -41,27 +41,26 @@ usage ()
      echo "-h: Show help"
 }
 
-if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
-      echo "Install Packages"
-      yum install -y kexec-tools yum-utils net-tools openssh-server vim bash-completion krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
-      echo "Clean Clean"
+clean_cache(){
+echo "Clean Cache"
       kdestroy -A
       systemctl stop sssd
       sss_cache -E
-      sudo rm /var/lib/sss/db/*.ldb
+      rm -f /var/lib/sss/db/*.ldb
       systemctl start sssd
       authconfig --updateall
+}
+
+if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
+      echo "Install Packages"
+      yum install -y kexec-tools yum-utils net-tools openssh-server vim bash-completion krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
+      clean_cache
       
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       echo "Install Packages"
       apt install -y krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools &> /dev/null
-      echo "Clean Clean"
-      kdestroy -A
-      systemctl stop sssd
-      sss_cache -E
-      sudo rm /var/lib/sss/db/*.ldb
-      systemctl start sssd
-      authconfig --updateall
+      clean_cache
+      
 fi
 
 
