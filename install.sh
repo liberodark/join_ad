@@ -53,12 +53,13 @@ echo "Clean Cache"
 
 if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
       echo "Install Packages"
-      yum install -y kexec-tools yum-utils net-tools openssh-server vim bash-completion krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
+      yum install -yq kexec-tools yum-utils net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
       clean_cache
       
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       echo "Install Packages"
-      apt install -y krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools &> /dev/null
+      export DEBIAN_FRONTEND=noninteractive
+      apt install -y openssh-server krb5-user krb5-config samba samba-common smbclient oddjob oddjob-mkhomedir sssd adcli open-vm-tools &> /dev/null
       clean_cache
       
 fi
