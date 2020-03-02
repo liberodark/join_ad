@@ -60,7 +60,7 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       echo "Install Packages"
       export DEBIAN_FRONTEND=noninteractive
-      apt install -yq openssh-server realmd krb5-user krb5-config samba samba-common smbclient oddjob oddjob-mkhomedir sssd sssd-tools adcli open-vm-tools &> /dev/null
+      apt install -yq packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient oddjob oddjob-mkhomedir sssd sssd-tools adcli open-vm-tools &> /dev/null
       clean_cache    
 fi
 }
