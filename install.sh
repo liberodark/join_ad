@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.1.6"
+version="0.1.7"
 
 echo "Welcome on Join AD Script $version"
 
@@ -116,38 +116,38 @@ parse_args ()
     
     if [ -z "${DOMAIN_ADMIN}" ]
     then
-        echo "Le domain admin est obligatoire (-da XXX)" >&2
+        echo "The admin domain is required (-da XXX)" >&2
         exit 2
     fi
 }
 
 recap ()
 {
-    echo "Intégration au domaine : '${REALM}'"
-    echo "  Contrôleur de domaine : '${DC}'"
+    echo "Integration into the domain : '${REALM}'"
+    echo "  Domain controller : '${DC}'"
     echo "  Domain admin          : '${DOMAIN_ADMIN}'"
     echo "  Domain admin group    : '${DOMAIN_ADMIN_GROUP}'"
     echo "  Domaine Kerberos      : '${KRB5_REALM}'"
     if [ -z "${PROJECT_GROUP}" ]
     then
-        echo "  Groupe projet         : '${PROJECT_GROUP}'"
+        echo "  Project group         : '${PROJECT_GROUP}'"
         if [ -z "${PROJECT_ADMIN_GROUP}" ]
         then
-            echo "  Groupe admin projet   : '${PROJECT_ADMIN_GROUP}'"
+            echo "  Project admin group   : '${PROJECT_ADMIN_GROUP}'"
         else
-            echo "  Pas d'admin projet"
+            echo "  No project admin"
         fi
     else
-        echo "  Pas de projet"
+        echo "  No project"
     fi
     
     if [ "${AUTO}" -eq 0 ]
     then
-        echo "Continuer ? (O/N)"
+        echo "Continue ? (Y/N)"
         read -r OK
         if [ "$OK" = "n" ] || [ "$OK" = "N" ]
         then
-            echo "Abandon..." 
+            echo "Abord..." 
             exit 3
         fi
     fi
@@ -157,7 +157,7 @@ parse_args "$@"
 
 if [ "${PROJECT_GROUP}" == "ask" ]
 then
-    echo "Nom du groupe projet (vide si aucun) : "
+    echo "Project group name (empty if none) : "
     read -r PROJECT_GROUP
     if [ -z "${PROJECT_GROUP}" ]
     then
@@ -167,12 +167,12 @@ fi
 
 recap
 
-echo "Intérrogation du domaine..."
+echo "Domain query..."
 realm discover "${REALM}"
 domainname "${REALM}"
 
-echo "Configuration Kerberos..."
-# sauvegarde de l'ancien fichier de conf si besoin
+echo "Kerberos configuration..."
+# backup the old conf file if necessary
 [ ! -f /etc/krb5.conf.save.join."${REALM}" ] && cp /etc/krb5.conf /etc/krb5.conf.save.join."${REALM}" 
 
 cat << EOF > /etc/krb5.conf
@@ -195,13 +195,13 @@ cat << EOF > /etc/krb5.conf
 
 EOF
 
-echo "Authentification du domain admin..."
+echo "Admin domain authentication..."
 kinit "${DOMAIN_ADMIN}"
 
 echo "Join au domain..."
 realm join "${DC}" -U "${DOMAIN_ADMIN}" -v
 
-echo "Nom des users sans domaine..."
+echo "Name of users without domain..."
 
 if grep "^[ \t]*use_fully_qualified_names" "/etc/sssd/sssd.conf" > /dev/null 2>&1
 then
@@ -214,7 +214,7 @@ sed -i 's|^\([ \t]*fallback_homedir\).*$|\1 = /home/%d/%u|' "/etc/sssd/sssd.conf
 systemctl restart sssd
 echo test
 
-echo "Autorisation d'accès..."
+echo "Access authorization..."
 
 realm permit -g "${DOMAIN_ADMIN_GROUP}"
 if [ -z "${PROJECT_GROUP}" ]
@@ -222,7 +222,7 @@ then
     realm permit -g "${PROJECT_GROUP}"
 fi
 
-echo "Création automatique des homes..."
+echo "Automatic creation of homes..."
 authconfig --enablemkhomedir --updateall
 
 echo "Administrators..."
