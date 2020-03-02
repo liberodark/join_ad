@@ -51,6 +51,22 @@ echo "Clean Cache"
       authconfig --updateall
 }
 
+install_dependencies(){
+if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
+      echo "Install Packages"
+      yum install -y kexec-tools yum-utils net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
+      clean_cache
+      
+     elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
+      echo "Install Packages"
+      export DEBIAN_FRONTEND=noninteractive
+      apt install -yq openssh-server krb5-user krb5-config samba samba-common smbclient oddjob oddjob-mkhomedir sssd sssd-tools adcli open-vm-tools &> /dev/null
+      clean_cache    
+fi
+}
+
+install_dependencies
+
 parse_args ()
 {
     while [ $# -ne 0 ]
@@ -104,18 +120,6 @@ parse_args ()
         exit 2
     fi
 }
-
-if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
-      echo "Install Packages"
-      yum install -y kexec-tools yum-utils net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
-      clean_cache
-      
-     elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
-      echo "Install Packages"
-      export DEBIAN_FRONTEND=noninteractive
-      apt install -yq openssh-server krb5-user krb5-config samba samba-common smbclient oddjob oddjob-mkhomedir sssd adcli open-vm-tools &> /dev/null
-      clean_cache    
-fi
 
 recap ()
 {
