@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.1.8"
+version="0.1.9"
 
 echo "Welcome on Join AD Script $version"
 
@@ -54,7 +54,7 @@ echo "Clean Cache"
 install_dependencies(){
 if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
       echo "Install Packages"
-      yum install -y kexec-tools yum-utils net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
+      yum install -y kexec-tools yum-utils authconfig net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
       clean_cache
       
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
@@ -224,6 +224,17 @@ fi
 
 echo "Automatic creation of homes..."
 authconfig --enablemkhomedir --updateall
+
+authconfig_compatibility(){
+authselect check
+authselect current --raw
+authselect select sssd with-mkhomedir --force
+systemctl enable oddjobd.service
+systemctl stop oddjobd.service
+systemctl start oddjobd.service
+}
+
+authconfig_compatibility
 
 echo "Administrators..."
 
