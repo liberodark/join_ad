@@ -225,6 +225,9 @@ fi
 echo "Automatic creation of homes..."
 authconfig --enablemkhomedir --updateall
 
+authselect select sssd with-mkhomedir --force
+authselect apply-changes
+
 authconfig_compatibility(){
 authselect check
 authselect current --raw
@@ -234,8 +237,6 @@ systemctl enable oddjobd.service
 systemctl stop oddjobd.service
 systemctl start oddjobd.service
 }
-
-authconfig_compatibility
 
 echo "Administrators..."
 
