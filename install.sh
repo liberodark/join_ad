@@ -229,6 +229,7 @@ authconfig_compatibility(){
 authselect check
 authselect current --raw
 authselect select sssd with-mkhomedir --force
+systemctl enable sssd.service
 systemctl enable oddjobd.service
 systemctl stop oddjobd.service
 systemctl start oddjobd.service
