@@ -26,6 +26,7 @@ DOMAIN_ADMIN_GROUP=""
 PROJECT_ADMIN_GROUP=""
 PROJECT_GROUP=""
 DOMAIN_ADMIN=""
+AUTO=0
 distribution=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' | sed 's/["]//g' | awk '{print $1}')
 
 usage ()
@@ -95,6 +96,9 @@ parse_args ()
             -pga)
                 shift
                 PROJECT_ADMIN_GROUP="${1}"
+                ;;
+            -auto)
+                AUTO=1
                 ;;
             -h|--help)
                 usage
