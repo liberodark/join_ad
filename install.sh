@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.1.9"
+version="0.2.0"
 
 echo "Welcome on Join AD Script $version"
 
@@ -227,12 +227,19 @@ then
 fi
 
 echo "Automatic creation of homes..."
+run_authconfig(){
+echo "Run authconfig..."
 authconfig --enablemkhomedir --updateall
+}
 
+run_authselect(){
+echo "Run authselect..."
 authselect select sssd with-mkhomedir --force
 authselect apply-changes
+}
 
 authconfig_compatibility(){
+echo "Run authselect compatibility..."
 authselect check
 authselect current --raw
 authselect select sssd with-mkhomedir --force
@@ -241,6 +248,12 @@ systemctl enable oddjobd.service
 systemctl stop oddjobd.service
 systemctl start oddjobd.service
 }
+
+if ! command -v authselect > /dev/null 2>&1; then
+run_authconfig || exit
+else
+run_authselect || exit
+fi
 
 echo "Administrators..."
 
