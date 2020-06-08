@@ -168,7 +168,8 @@ cat << EOF > /etc/krb5.conf
     renew_lifetime = 7d
     forwardable = true
     rdns = false
-    default_ccache_name = DIR:/run/user/%{uid}/krb5cc
+    #default_ccache_name = DIR:/run/user/%{uid}/krb5cc
+    default_ccache_name = FILE:/tmp/krb5cc_%{uid}
     default_realm = ${KRB5_REALM}
 [realms]
     ${REALM} = {
