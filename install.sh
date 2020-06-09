@@ -56,12 +56,12 @@ echo "Clean Cache"
 install_dependencies(){
 if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
       echo "Install Packages"
-      yum install -y kexec-tools yum-utils authconfig net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
+      yum install -y kexec-tools yum-utils authconfig net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools realmd &> /dev/null
       
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       echo "Install Packages"
       export DEBIAN_FRONTEND=noninteractive
-      apt install -yq packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient oddjob oddjob-mkhomedir sssd sssd-tools adcli open-vm-tools &> /dev/null   
+      apt install -yq packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient oddjob oddjob-mkhomedir sssd sssd-tools adcli &> /dev/null   
 fi
 }
 
