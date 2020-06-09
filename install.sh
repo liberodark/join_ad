@@ -39,6 +39,7 @@ usage ()
      echo "-dag DA_G: Domain Administrator Group Definition (Default: ${DOMAIN_ADMIN_GROUP})"
      echo "-pg PROJECT: Project Group Definition"
      echo "-pga PA_G: Project Administrators Group Definition (default: ${PROJECT_ADMIN_GROUP})"
+     echo "-clean Clean cache"
      echo "-h: Show help"
 }
 
@@ -49,20 +50,18 @@ echo "Clean Cache"
       sss_cache -E
       rm -f /var/lib/sss/db/*.ldb
       systemctl start sssd
-      authconfig --updateall
+      #authconfig --updateall
 }
 
 install_dependencies(){
 if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
       echo "Install Packages"
       yum install -y kexec-tools yum-utils authconfig net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools open-vm-tools realmd &> /dev/null
-      clean_cache
       
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       echo "Install Packages"
       export DEBIAN_FRONTEND=noninteractive
-      apt install -yq packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient oddjob oddjob-mkhomedir sssd sssd-tools adcli open-vm-tools &> /dev/null
-      clean_cache    
+      apt install -yq packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient oddjob oddjob-mkhomedir sssd sssd-tools adcli open-vm-tools &> /dev/null   
 fi
 }
 
@@ -99,6 +98,10 @@ parse_args ()
                 ;;
             -auto)
                 AUTO=1
+                ;;
+            -clean)
+                shift
+                clean_cache
                 ;;
             -h|--help)
                 usage
