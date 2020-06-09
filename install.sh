@@ -215,6 +215,8 @@ else
 fi
 sed -i 's|^\([ \t]*fallback_homedir\).*$|\1 = /home/%d/%u|' "/etc/sssd/sssd.conf"
 
+chown root: /etc/sssd/sssd.conf
+chmod 600 /etc/sssd/sssd.conf
 systemctl restart sssd
 echo test
 
