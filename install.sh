@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.2.1"
+version="0.2.2"
 
 echo "Welcome on Join AD Script $version"
 
@@ -222,7 +222,6 @@ sed -i 's|^\([ \t]*fallback_homedir\).*$|\1 = /home/%d/%u|' "/etc/sssd/sssd.conf
 chown root: /etc/sssd/sssd.conf
 chmod 600 /etc/sssd/sssd.conf
 systemctl restart sssd
-echo test
 
 echo "Access authorization..."
 
@@ -232,8 +231,8 @@ then
     realm permit -g "${PROJECT_GROUP}"
 fi
 
-echo "Automatic creation of homes..."
 run_authconfig(){
+echo "Automatic creation of homes..."
 echo "Run authconfig..."
 authconfig --enablemkhomedir --updateall
 }
@@ -255,10 +254,36 @@ systemctl stop oddjobd.service
 systemctl start oddjobd.service
 }
 
+detect_authselect(){
 if ! command -v authselect > /dev/null 2>&1; then
 run_authconfig || exit
 else
 run_authselect || exit
+fi
+}
+
+pam_mkdir(){
+echo "Automatic creation of homes..."
+if [ ! -e /usr/share/pam-configs/mkhomedir ]
+then
+cat << EOF > /usr/share/pam-configs/mkhomedir
+Name: Create home directory during login
+Default: yes
+Priority: 0
+Session-Interactive-Only: no
+Session-Type: Additional
+Session-Final:
+        optional        pam_mkhomedir.so
+EOF
+fi
+}
+
+if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
+      detect_authselect
+      
+     elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
+      pam_mkdir
+      pam-auth-update
 fi
 
 echo "Administrators..."
