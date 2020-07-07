@@ -62,7 +62,7 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
       echo "Install Packages"
       export DEBIAN_FRONTEND=noninteractive
       #apt install -yq realmd ntp ntpdate sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin krb5-user sudo &> /dev/null
-      apt install -yq packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient oddjob oddjob-mkhomedir sssd sssd-tools adcli &> /dev/null
+      apt install -yq packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
 fi
 }
 
