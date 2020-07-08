@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.2.2"
+version="0.2.3"
 
 echo "Welcome on Join AD Script $version"
 
@@ -62,7 +62,7 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
       echo "Install Packages"
       export DEBIAN_FRONTEND=noninteractive
       #apt install -yq realmd ntp ntpdate sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin krb5-user sudo &> /dev/null
-      apt install -yq packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
+      apt install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
 fi
 }
 
