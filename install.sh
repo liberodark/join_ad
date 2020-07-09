@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.2.3"
+version="0.2.4"
 
 echo "Welcome on Join AD Script $version"
 
@@ -61,8 +61,8 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       echo "Install Packages"
       export DEBIAN_FRONTEND=noninteractive
-      #apt install -yq realmd ntp ntpdate sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin krb5-user sudo &> /dev/null
-      apt install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
+      apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
+      apt-get install -yq libnss-ldap libpam-ldap ldap-utils nscd
 fi
 }
 
@@ -278,11 +278,32 @@ EOF
 fi
 }
 
+pam_ldap(){
+echo "LDAP configuration..."
+# backup the old conf file if necessary
+[ ! -f /etc/pam_ldap.conf.save.join."${REALM}" ] && cp /etc/pam_ldap.conf /etc/pam_ldap.conf.save.join."${REALM}"
+
+echo "What is your server ex : dc=domain,dc=com ?"
+read -r domain_name
+
+cat << EOF > /etc/pam_ldap.conf
+base ${domain_name}
+uri ldapi:///${REALM}
+ldap_version 3
+#binddn cn=proxyuser,dc=padl,dc=com
+# Password is stored in /etc/pam_ldap.secret (mode 600)
+rootbinddn cn=${DOMAIN_ADMIN},${domain_name}
+#port 389
+pam_password crypt
+EOF
+}
+
 if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
       detect_authselect
       
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       pam_mkdir
+      pam_ldap
       pam-auth-update
 fi
 
