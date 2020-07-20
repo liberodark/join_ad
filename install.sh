@@ -222,7 +222,7 @@ echo "Clean Cache & Fix"
       mkdir -p /var/log/sssd
       touch /var/log/sssd/sssd.log
       systemctl start sssd
-      detect_authselect
+      #detect_authselect
 }
 
 install_dependencies(){
