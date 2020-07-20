@@ -222,6 +222,7 @@ echo "Clean Cache & Fix"
       mkdir -p /var/log/sssd
       touch /var/log/sssd/sssd.log
       systemctl start sssd
+      # Fix "SSSD couldn't load the configuration database Input/output error"
       #rm -f /usr/lib64/ldb/modules/ldb/paged_results.so
       #detect_authselect
 }
