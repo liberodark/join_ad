@@ -222,6 +222,7 @@ echo "Clean Cache & Fix"
       mkdir -p /var/log/sssd
       touch /var/log/sssd/sssd.log
       systemctl start sssd
+      #rm -f /usr/lib64/ldb/modules/ldb/paged_results.so
       #detect_authselect
 }
 
