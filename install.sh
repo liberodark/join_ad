@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.2.4"
+version="0.2.5"
 
 echo "Welcome on Join AD Script $version"
 
@@ -43,16 +43,6 @@ usage ()
      echo "-h: Show help"
 }
 
-clean_cache(){
-echo "Clean Cache"
-      kdestroy -A
-      systemctl stop sssd
-      sss_cache -E
-      rm -f /var/lib/sss/db/*.ldb
-      systemctl start sssd
-      #authconfig --updateall
-}
-
 install_dependencies(){
 if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
       echo "Install Packages"
@@ -62,11 +52,9 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
       echo "Install Packages"
       export DEBIAN_FRONTEND=noninteractive
       apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
-      apt-get install -yq libnss-ldap libpam-ldap ldap-utils nscd
+      apt-get install -yq libnss-ldap libpam-ldap ldap-utils nscd &> /dev/null
 fi
 }
-
-install_dependencies
 
 parse_args ()
 {
@@ -174,7 +162,7 @@ then
 fi
 
 recap
-
+install_dependencies
 echo "Domain query..."
 realm discover "${REALM}"
 domainname "${REALM}"
@@ -296,6 +284,18 @@ rootbinddn cn=${DOMAIN_ADMIN},${domain_name}
 #port 389
 pam_password crypt
 EOF
+}
+
+clean_cache(){
+echo "Clean Cache"
+      kdestroy -A
+      systemctl stop sssd
+      sss_cache -E
+      rm -f /var/lib/sss/db/*.ldb
+      mkdir -p /var/log/sssd
+      touch /var/log/sssd/sssd.log
+      systemctl start sssd
+      detect_authselect
 }
 
 if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
