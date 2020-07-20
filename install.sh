@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.2.5"
+version="0.2.6"
 
 echo "Welcome on Join AD Script $version"
 
@@ -39,98 +39,11 @@ usage ()
      echo "-dag DA_G: Domain Administrator Group Definition (Default: ${DOMAIN_ADMIN_GROUP})"
      echo "-pg PROJECT: Project Group Definition"
      echo "-pga PA_G: Project Administrators Group Definition (default: ${PROJECT_ADMIN_GROUP})"
-     echo "-clean Clean cache"
+     echo "-clean Clean cache & Fix"
      echo "-h: Show help"
 }
 
-clean_cache(){
-echo "Clean Cache"
-      kdestroy -A
-      systemctl stop sssd
-      sss_cache -E
-      rm -f /var/lib/sss/db/*.ldb
-      mkdir -p /var/log/sssd
-      touch /var/log/sssd/sssd.log
-      systemctl start sssd
-      #detect_authselect
-}
-
-install_dependencies(){
-if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
-      echo "Install Packages"
-      yum install -y kexec-tools yum-utils authconfig net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools realmd &> /dev/null
-      
-     elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
-      echo "Install Packages"
-      export DEBIAN_FRONTEND=noninteractive
-      apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
-      apt-get install -yq libnss-ldap libpam-ldap ldap-utils nscd &> /dev/null
-fi
-}
-
-parse_args ()
-{
-    while [ $# -ne 0 ]
-    do
-        case "${1}" in
-            -da)
-                shift
-                DOMAIN_ADMIN="${1}"
-                ;;
-            -dc)
-                shift
-                DC="${1}"
-                ;;
-            -r)
-                shift
-                REALM="${1}"
-                ;;
-            -dag)
-                shift
-                DOMAIN_ADMIN_GROUP="${1}"
-                ;;
-            -pg)
-                shift
-                PROJECT_GROUP="${1}"
-                ;;
-            -pga)
-                shift
-                PROJECT_ADMIN_GROUP="${1}"
-                ;;
-            -auto)
-                AUTO=1
-                ;;
-            -clean)
-                shift
-                clean_cache
-                ;;
-            -h|--help)
-                usage
-                exit 0
-                ;;
-            *)
-                echo "Argument invalide : ${1}" >&2
-                usage >&2
-                exit 1
-                ;;
-        esac
-        shift
-    done
-    KRB5_REALM=$(echo "${REALM}" | tr '[:lower:]' '[:upper:]')
-    if [ -z "${PROJECT_GROUP}" ]
-    then
-        PROJECT_ADMIN_GROUP=""
-    fi
-    
-    if [ -z "${DOMAIN_ADMIN}" ]
-    then
-        echo "The admin domain is required (-da XXX)" >&2
-        exit 2
-    fi
-}
-
-recap ()
-{
+recap(){
     echo "Integration into the domain : '${REALM}'"
     echo "  Domain controller : '${DC}'"
     echo "  Domain admin          : '${DOMAIN_ADMIN}'"
@@ -161,8 +74,7 @@ recap ()
     fi
 }
 
-parse_args "$@"
-
+run_ask(){
 if [ "${PROJECT_GROUP}" == "ask" ]
 then
     echo "Project group name (empty if none) : "
@@ -172,13 +84,9 @@ then
         PROJECT_ADMIN_GROUP=""
     fi
 fi
+}
 
-recap
-install_dependencies
-echo "Domain query..."
-realm discover "${REALM}"
-domainname "${REALM}"
-
+run_kerberos_configuration(){
 echo "Kerberos configuration..."
 # backup the old conf file if necessary
 [ ! -f /etc/krb5.conf.save.join."${REALM}" ] && cp /etc/krb5.conf /etc/krb5.conf.save.join."${REALM}" 
@@ -202,15 +110,20 @@ cat << EOF > /etc/krb5.conf
     }
 
 EOF
+}
 
+run_authentication(){
 echo "Admin domain authentication..."
 kinit "${DOMAIN_ADMIN}"
+}
 
-echo "Join au domain..."
+run_realm_join(){
+echo "Join domain..."
 realm join "${DC}" -U "${DOMAIN_ADMIN}" -v
+}
 
+run_configuration(){
 echo "Name of users without domain..."
-
 if grep "^[ \t]*use_fully_qualified_names" "/etc/sssd/sssd.conf" > /dev/null 2>&1
 then
     sed -i 's|^\([ \t]*use_fully_qualified_names\).*$|\1 = False|' "/etc/sssd/sssd.conf"
@@ -222,14 +135,16 @@ sed -i 's|^\([ \t]*fallback_homedir\).*$|\1 = /home/%d/%u|' "/etc/sssd/sssd.conf
 chown root: /etc/sssd/sssd.conf
 chmod 600 /etc/sssd/sssd.conf
 systemctl restart sssd
+}
 
+run_authorization(){
 echo "Access authorization..."
-
 realm permit -g "${DOMAIN_ADMIN_GROUP}"
 if [ -z "${PROJECT_GROUP}" ]
 then
     realm permit -g "${PROJECT_GROUP}"
 fi
+}
 
 run_authconfig(){
 echo "Automatic creation of homes..."
@@ -298,17 +213,33 @@ pam_password crypt
 EOF
 }
 
-if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
+clean_cache(){
+echo "Clean Cache & Fix"
+      kdestroy -A
+      systemctl stop sssd
+      sss_cache -E
+      rm -f /var/lib/sss/db/*.ldb
+      mkdir -p /var/log/sssd
+      touch /var/log/sssd/sssd.log
+      systemctl start sssd
       detect_authselect
+}
+
+install_dependencies(){
+if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
+      echo "Install Packages"
+      yum install -y kexec-tools yum-utils authconfig net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools realmd &> /dev/null
       
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
-      pam_mkdir
-      pam_ldap
-      pam-auth-update
+      echo "Install Packages"
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
+      apt-get install -yq libnss-ldap libpam-ldap ldap-utils nscd &> /dev/null
 fi
+}
 
+run_admin_configuration(){
 echo "Administrators..."
-
 if [ -n "${PROJECT_ADMIN_GROUP}" ]; then
         echo '"%'"${PROJECT_ADMIN_GROUP}"'" ALL=(ALL) ALL' > /etc/sudoers.d/admins
 elif [ -n "${DOMAIN_ADMIN_GROUP}" ]; then
@@ -317,3 +248,104 @@ elif [ -n "${DOMAIN_ADMIN_GROUP}" ]; then
 fi
 
 chmod 600 /etc/sudoers.d/admins
+}
+
+run_check_os(){
+if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
+      recap
+      run_ask
+      install_dependencies
+      echo "Domain query..."
+      realm discover "${REALM}"
+      domainname "${REALM}"
+      run_kerberos_configuration
+      run_authentication
+      run_realm_join
+      run_configuration
+      run_authorization
+      detect_authselect
+      run_admin_configuration
+      
+     elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
+      recap
+      run_ask
+      install_dependencies
+      echo "Domain query..."
+      realm discover "${REALM}"
+      domainname "${REALM}"
+      run_kerberos_configuration
+      run_authentication
+      run_realm_join
+      run_configuration
+      run_authorization
+      pam_mkdir
+      pam_ldap
+      pam-auth-update
+      run_admin_configuration
+fi
+}
+
+
+parse_args ()
+{
+    while [ $# -ne 0 ]
+    do
+        case "${1}" in
+            -da)
+                shift
+                DOMAIN_ADMIN="${1}"
+                run_check_os
+                ;;
+            -dc)
+                shift
+                DC="${1}"
+                ;;
+            -r)
+                shift
+                REALM="${1}"
+                ;;
+            -dag)
+                shift
+                DOMAIN_ADMIN_GROUP="${1}"
+                ;;
+            -pg)
+                shift
+                PROJECT_GROUP="${1}"
+                ;;
+            -pga)
+                shift
+                PROJECT_ADMIN_GROUP="${1}"
+                ;;
+            -auto)
+                AUTO=1
+                ;;
+            -clean)
+                shift
+                clean_cache
+                ;;
+            -h|--help)
+                usage
+                exit 0
+                ;;
+            *)
+                echo "Argument invalide : ${1}" >&2
+                usage >&2
+                exit 1
+                ;;
+        esac
+        shift
+    done
+    KRB5_REALM=$(echo "${REALM}" | tr '[:lower:]' '[:upper:]')
+    if [ -z "${PROJECT_GROUP}" ]
+    then
+        PROJECT_ADMIN_GROUP=""
+    fi
+    
+    if [ -z "${DOMAIN_ADMIN}" ]
+    then
+        echo "The admin domain is required (-da XXX)" >&2
+        exit 2
+    fi
+}
+
+parse_args "$@"
