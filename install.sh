@@ -285,7 +285,6 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
 fi
 }
 
-
 parse_args ()
 {
     while [ $# -ne 0 ]
@@ -294,7 +293,6 @@ parse_args ()
             -da)
                 shift
                 DOMAIN_ADMIN="${1}"
-                run_check_os
                 ;;
             -dc)
                 shift
@@ -346,6 +344,8 @@ parse_args ()
         echo "The admin domain is required (-da XXX)" >&2
         exit 2
     fi
+    
+    run_check_os
 }
 
 parse_args "$@"
