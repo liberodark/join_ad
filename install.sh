@@ -43,6 +43,18 @@ usage ()
      echo "-h: Show help"
 }
 
+clean_cache(){
+echo "Clean Cache"
+      kdestroy -A
+      systemctl stop sssd
+      sss_cache -E
+      rm -f /var/lib/sss/db/*.ldb
+      mkdir -p /var/log/sssd
+      touch /var/log/sssd/sssd.log
+      systemctl start sssd
+      detect_authselect
+}
+
 install_dependencies(){
 if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
       echo "Install Packages"
@@ -284,18 +296,6 @@ rootbinddn cn=${DOMAIN_ADMIN},${domain_name}
 #port 389
 pam_password crypt
 EOF
-}
-
-clean_cache(){
-echo "Clean Cache"
-      kdestroy -A
-      systemctl stop sssd
-      sss_cache -E
-      rm -f /var/lib/sss/db/*.ldb
-      mkdir -p /var/log/sssd
-      touch /var/log/sssd/sssd.log
-      systemctl start sssd
-      detect_authselect
 }
 
 if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
