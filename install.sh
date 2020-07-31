@@ -235,7 +235,7 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       echo "Install Packages"
       export DEBIAN_FRONTEND=noninteractive
-      apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
+      #apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
       apt-get install -yq libnss-ldap libpam-ldap ldap-utils nscd &> /dev/null
 fi
 }
