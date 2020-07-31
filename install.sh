@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.2.6"
+version="0.2.7"
 
 echo "Welcome on Join AD Script $version"
 
@@ -193,6 +193,22 @@ EOF
 fi
 }
 
+pam_mkdir_new(){
+echo "Automatic creation of homes..."
+if [ ! -e /usr/share/pam-configs/mkhomedir ]
+then
+cat << EOF > /usr/share/pam-configs/mkhomedir
+Name: activate mkhomedir
+Default: yes
+Priority: 900
+Session-Type: Additional
+Session:
+        required                        pam_mkhomedir.so umask=0022 skel=/etc/skel
+EOF
+pam-auth-update
+fi
+}
+
 pam_ldap(){
 echo "LDAP configuration..."
 # backup the old conf file if necessary
@@ -215,6 +231,7 @@ EOF
 
 clean_cache(){
 echo "Clean Cache & Fix"
+      realm leave
       kdestroy -A
       systemctl stop sssd
       sss_cache -E
@@ -235,8 +252,9 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
      elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       echo "Install Packages"
       export DEBIAN_FRONTEND=noninteractive
-      #apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
-      apt-get install -yq libnss-ldap libpam-ldap ldap-utils nscd &> /dev/null
+      #V1#apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
+      #V2#apt-get install -yq libnss-ldap libpam-ldap ldap-utils nscd &> /dev/null
+      apt-get install -yq realmd libnss-sss libpam-sss sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit
 fi
 }
 
@@ -280,9 +298,8 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
       run_realm_join
       run_configuration
       run_authorization
-      pam_mkdir
-      pam_ldap
-      pam-auth-update
+      pam_mkdir_new
+      #pam_ldap
       run_admin_configuration
 fi
 }
