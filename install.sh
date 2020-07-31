@@ -254,7 +254,7 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
       export DEBIAN_FRONTEND=noninteractive
       #V1#apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
       #V2#apt-get install -yq libnss-ldap libpam-ldap ldap-utils nscd &> /dev/null
-      apt-get install -yq realmd libnss-sss libpam-sss sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit
+      apt-get install -yq sudo realmd libnss-sss libpam-sss sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit
 fi
 }
 
