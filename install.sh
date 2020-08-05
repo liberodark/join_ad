@@ -193,7 +193,7 @@ EOF
 fi
 }
 
-pam_mkdir_new(){
+pam_mkdir_new_v1(){
 echo "Automatic creation of homes..."
 if [ ! -e /usr/share/pam-configs/mkhomedir ]
 then
@@ -208,6 +208,15 @@ EOF
 pam-auth-update
 fi
 }
+
+pam_mkdir_new_v2(){
+echo "Automatic creation of homes..."
+if [ ! -e /etc/pam.d/common-session ]
+then
+echo "session optional pam_mkhomedir.so skel=/etc/skel umask=077" >> /etc/pam.d/common-session
+fi
+}
+
 
 pam_ldap(){
 echo "LDAP configuration..."
@@ -298,7 +307,7 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
       run_realm_join
       run_configuration
       run_authorization
-      pam_mkdir_new
+      pam_mkdir_new_v2
       #pam_ldap
       run_admin_configuration
 fi
