@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.2.5"
+version="0.2.6"
 
 echo "Welcome on Join AD Script $version"
 
@@ -45,6 +45,7 @@ usage ()
 
 clean_cache(){
 echo "Clean Cache"
+      ream leave -v
       kdestroy -A
       systemctl stop sssd
       sss_cache -E
