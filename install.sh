@@ -45,7 +45,8 @@ usage ()
 
 clean_cache(){
 echo "Clean Cache"
-      ream leave -v
+      cp -a /etc/sssd/sssd.conf /etc/sssd/sssd.conf.old
+      realm leave -v
       kdestroy -A
       systemctl stop sssd
       sss_cache -E
