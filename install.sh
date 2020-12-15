@@ -5,9 +5,9 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-version="0.2.7"
+VERSION="0.2.8"
 
-echo "Welcome on Join AD Script $version"
+echo "Welcome on Join AD Script ${VERSION}"
 
 #=================================================
 # CHECK ROOT
@@ -27,7 +27,8 @@ PROJECT_ADMIN_GROUP=""
 PROJECT_GROUP=""
 DOMAIN_ADMIN=""
 AUTO=0
-distribution=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' | sed 's/["]//g' | awk '{print $1}')
+DATE=$(date +%Y.%m.%d_%H-%M-%S)
+DETECT_OS=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' | sed 's/["]//g' | awk '{print $1}')
 
 usage ()
 {
@@ -240,7 +241,8 @@ EOF
 
 clean_cache(){
 echo "Clean Cache & Fix"
-      realm leave
+      cp -a "/etc/sssd/sssd.conf /etc/sssd/sssd.conf.old.${DATE}"
+      ream leave -v
       kdestroy -A
       systemctl stop sssd
       sss_cache -E
@@ -254,11 +256,11 @@ echo "Clean Cache & Fix"
 }
 
 install_dependencies(){
-if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
+if [[ "${DETECT_OS}" = CentOS || "${DETECT_OS}" = CentOS || "${DETECT_OS}" = Red\ Hat || "${DETECT_OS}" = Fedora || "${DETECT_OS}" = Suse || "${DETECT_OS}" = Oracle ]]; then
       echo "Install Packages"
       yum install -y kexec-tools yum-utils authconfig net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools realmd &> /dev/null
       
-     elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
+     elif [[ "${DETECT_OS}" = Debian || "${DETECT_OS}" = Ubuntu || "${DETECT_OS}" = Deepin ]]; then
       echo "Install Packages"
       export DEBIAN_FRONTEND=noninteractive
       #V1#apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
@@ -280,7 +282,7 @@ chmod 600 /etc/sudoers.d/admins
 }
 
 run_check_os(){
-if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
+if [[ "${DETECT_OS}" = CentOS || "${DETECT_OS}" = CentOS || "${DETECT_OS}" = Red\ Hat || "${DETECT_OS}" = Fedora || "${DETECT_OS}" = Suse || "${DETECT_OS}" = Oracle ]]; then
       recap
       run_ask
       install_dependencies
@@ -295,7 +297,7 @@ if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = 
       detect_authselect
       run_admin_configuration
       
-     elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
+     elif [[ "${DETECT_OS}" = Debian || "${DETECT_OS}" = Ubuntu || "${DETECT_OS}" = Deepin ]]; then
       recap
       run_ask
       install_dependencies
