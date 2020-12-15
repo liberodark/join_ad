@@ -5,9 +5,9 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-VERSION="0.2.7"
+version="0.2.5"
 
-echo "Welcome on Join AD Script ${VERSION}"
+echo "Welcome on Join AD Script $version"
 
 #=================================================
 # CHECK ROOT
@@ -27,8 +27,7 @@ PROJECT_ADMIN_GROUP=""
 PROJECT_GROUP=""
 DOMAIN_ADMIN=""
 AUTO=0
-DATE=$(date +%Y.%m.%d_%H-%M-%S)
-DETECT_OS=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' | sed 's/["]//g' | awk '{print $1}')
+distribution=$(cat /etc/*release | grep "PRETTY_NAME" | sed 's/PRETTY_NAME=//g' | sed 's/["]//g' | awk '{print $1}')
 
 usage ()
 {
@@ -46,8 +45,6 @@ usage ()
 
 clean_cache(){
 echo "Clean Cache"
-      cp -a "/etc/sssd/sssd.conf /etc/sssd/sssd.conf.old.${DATE}"
-      realm leave -v
       kdestroy -A
       systemctl stop sssd
       sss_cache -E
@@ -59,11 +56,11 @@ echo "Clean Cache"
 }
 
 install_dependencies(){
-if [[ "${DETECT_OS}" = CentOS || "${DETECT_OS}" = CentOS || "${DETECT_OS}" = Red\ Hat || "${DETECT_OS}" = Fedora || "${DETECT_OS}" = Suse || "${DETECT_OS}" = Oracle ]]; then
+if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
       echo "Install Packages"
       yum install -y kexec-tools yum-utils authconfig net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools realmd &> /dev/null
       
-     elif [[ "${DETECT_OS}" = Debian || "${DETECT_OS}" = Ubuntu || "${DETECT_OS}" = Deepin ]]; then
+     elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       echo "Install Packages"
       export DEBIAN_FRONTEND=noninteractive
       apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
@@ -301,10 +298,10 @@ pam_password crypt
 EOF
 }
 
-if [[ "${DETECT_OS}" = CentOS || "${DETECT_OS}" = CentOS || "${DETECT_OS}" = Red\ Hat || "${DETECT_OS}" = Fedora || "${DETECT_OS}" = Suse || "${DETECT_OS}" = Oracle ]]; then
+if [[ "$distribution" = CentOS || "$distribution" = CentOS || "$distribution" = Red\ Hat || "$distribution" = Fedora || "$distribution" = Suse || "$distribution" = Oracle ]]; then
       detect_authselect
       
-     elif [[ "${DETECT_OS}" = Debian || "${DETECT_OS}" = Ubuntu || "${DETECT_OS}" = Deepin ]]; then
+     elif [[ "$distribution" = Debian || "$distribution" = Ubuntu || "$distribution" = Deepin ]]; then
       pam_mkdir
       pam_ldap
       pam-auth-update
