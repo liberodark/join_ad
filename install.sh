@@ -241,8 +241,8 @@ EOF
 
 clean_cache(){
 echo "Clean Cache & Fix"
-      cp -a "/etc/sssd/sssd.conf /etc/sssd/sssd.conf.old.${DATE}"
-      ream leave -v
+      cp -a /etc/sssd/sssd.conf /etc/sssd/sssd.conf.old."${DATE}"
+      realm leave -v
       kdestroy -A
       systemctl stop sssd
       sss_cache -E
