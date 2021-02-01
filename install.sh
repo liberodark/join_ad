@@ -265,7 +265,7 @@ if [[ "${DETECT_OS}" = CentOS || "${DETECT_OS}" = CentOS || "${DETECT_OS}" = Red
       export DEBIAN_FRONTEND=noninteractive
       #V1#apt-get install -yq sudo packagekit openssh-server realmd krb5-user krb5-config samba samba-common smbclient sssd sssd-tools adcli &> /dev/null
       #V2#apt-get install -yq libnss-ldap libpam-ldap ldap-utils nscd &> /dev/null
-      apt-get install -yq sudo realmd libnss-sss libpam-sss sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit krb5-config krb5-user
+      apt-get install -yq sudo realmd libnss-sss libpam-sss sssd sssd-tools adcli samba-common-bin oddjob oddjob-mkhomedir packagekit krb5-config krb5-user &> /dev/null
 fi
 }
 
