@@ -258,7 +258,7 @@ echo "Clean Cache & Fix"
 install_dependencies(){
 if [[ "${DETECT_OS}" = AlmaLinux || "${DETECT_OS}" = CentOS || "${DETECT_OS}" = Red\ Hat || "${DETECT_OS}" = Fedora || "${DETECT_OS}" = Suse || "${DETECT_OS}" = Oracle ]]; then
       echo "Install Packages"
-      yum install -y sudo kexec-tools yum-utils authconfig net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools realmd &> /dev/null
+      yum install -y hostname sudo kexec-tools yum-utils authconfig net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools realmd &> /dev/null
       
      elif [[ "${DETECT_OS}" = Debian || "${DETECT_OS}" = Ubuntu || "${DETECT_OS}" = Deepin ]]; then
       echo "Install Packages"
