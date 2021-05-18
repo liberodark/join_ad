@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-VERSION="0.3.1"
+VERSION="0.3.2"
 
 echo "Welcome on Join AD Script ${VERSION}"
 
@@ -256,7 +256,7 @@ echo "Clean Cache & Fix"
 }
 
 install_dependencies(){
-if [[ "${DETECT_OS}" = AlmaLinux || "${DETECT_OS}" = CentOS || "${DETECT_OS}" = Red\ Hat || "${DETECT_OS}" = Fedora || "${DETECT_OS}" = Suse || "${DETECT_OS}" = Oracle ]]; then
+if [[ "${DETECT_OS}" = AlmaLinux || "${DETECT_OS}" = Rocky || "${DETECT_OS}" = CentOS || "${DETECT_OS}" = Red\ Hat || "${DETECT_OS}" = Fedora || "${DETECT_OS}" = Suse || "${DETECT_OS}" = Oracle ]]; then
       echo "Install Packages"
       yum install -y hostname sudo kexec-tools yum-utils authconfig net-tools openssh-server krb5-workstation oddjob oddjob-mkhomedir sssd adcli samba-common-tools realmd &> /dev/null
       
@@ -282,7 +282,7 @@ chmod 600 /etc/sudoers.d/admins
 }
 
 run_check_os(){
-if [[ "${DETECT_OS}" = AlmaLinux || "${DETECT_OS}" = CentOS || "${DETECT_OS}" = Red\ Hat || "${DETECT_OS}" = Fedora || "${DETECT_OS}" = Suse || "${DETECT_OS}" = Oracle ]]; then
+if [[ "${DETECT_OS}" = AlmaLinux || "${DETECT_OS}" = Rocky || "${DETECT_OS}" = CentOS || "${DETECT_OS}" = Red\ Hat || "${DETECT_OS}" = Fedora || "${DETECT_OS}" = Suse || "${DETECT_OS}" = Oracle ]]; then
       recap
       run_ask
       install_dependencies
