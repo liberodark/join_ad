@@ -13,5 +13,6 @@ wget -Nnv https://raw.githubusercontent.com/liberodark/join_ad/master/install.sh
 - Debian 10.x
 - Centos 7.x / 8.x
 - AlmaLinux 8.x
+- RockyLinux 8.x
 - Oracle 7.x / 8.x
 - Red Hat 7.x / 8.x
