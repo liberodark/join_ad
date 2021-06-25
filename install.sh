@@ -5,7 +5,7 @@
 # Thanks : erdnaxeli
 # License: GNU GPLv3
 
-VERSION="0.3.2"
+VERSION="0.3.3"
 
 echo "Welcome on Join AD Script ${VERSION}"
 
@@ -220,8 +220,7 @@ fi
 
 pam_mkdir_new_v3(){
 echo "Automatic creation of homes..."
-if [ ! -e /usr/share/pam-configs/mkhomedir ]
-then
+if test -f "/usr/share/pam-configs/mkhomedir"; then
 cat << EOF > /usr/share/pam-configs/mkhomedir
 Name: Create home directory on login
 Default: no
@@ -233,12 +232,10 @@ Session:
 EOF
 fi
 
-if [ ! -e /etc/pam.d/common-session ]
-then
+if test -f "/etc/pam.d/common-session"; then
 echo "session optional                        pam_mkhomedir.so" >> /etc/pam.d/common-session
 fi
 }
-
 
 pam_ldap(){
 echo "LDAP configuration..."
