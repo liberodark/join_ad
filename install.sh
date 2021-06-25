@@ -218,6 +218,27 @@ echo "session optional pam_mkhomedir.so skel=/etc/skel umask=077" >> /etc/pam.d/
 fi
 }
 
+pam_mkdir_new_v3(){
+echo "Automatic creation of homes..."
+if [ ! -e /usr/share/pam-configs/mkhomedir ]
+then
+cat << EOF > /usr/share/pam-configs/mkhomedir
+Name: Create home directory on login
+Default: no
+Priority: 0
+Session-Type: Additional
+Session-Interactive-Only: yes
+Session:
+        optional                        pam_mkhomedir.so
+EOF
+fi
+
+if [ ! -e /etc/pam.d/common-session ]
+then
+echo "session optional                        pam_mkhomedir.so" >> /etc/pam.d/common-session
+fi
+}
+
 
 pam_ldap(){
 echo "LDAP configuration..."
@@ -309,7 +330,7 @@ if [[ "${DETECT_OS}" = AlmaLinux || "${DETECT_OS}" = Rocky || "${DETECT_OS}" = C
       run_realm_join
       run_configuration
       run_authorization
-      pam_mkdir_new_v2
+      pam_mkdir_new_v3
       #pam_ldap
       run_admin_configuration
 fi
